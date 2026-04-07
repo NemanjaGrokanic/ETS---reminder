@@ -279,7 +279,7 @@ Root files:
 - Toast notifications require Windows 10/11
 - GDI handles properly freed via `DestroyIcon` and `DeleteObject` P/Invoke
 - LogViewerWindow uses `AllowsTransparency="True"` for custom chrome (no Windows border)
-- Git repo: https://github.com/bejbiboj/ETS---reminder.git
+- Git repo: https://github.com/NemanjaGrokanic/ETS---reminder.git
 - Auto-save timer stopped in `ReportWindow.OnClosed` to prevent leaks
 - `using` aliases required in files that mix WPF and WinForms types
 - Use `ShowDialog()` for edit operations, `Show()` for viewing windows

@@ -67,7 +67,7 @@ Spend your coins on 10 color themes:
 
 ```powershell
 # Clone the repo
-git clone https://github.com/bejbiboj/ETS---reminder.git
+git clone https://github.com/NemanjaGrokanic/ETS---reminder.git
 cd "ETS---reminder"
 
 # Build
