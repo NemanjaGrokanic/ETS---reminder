@@ -231,6 +231,17 @@ public partial class App : Application
     {
         _reportFilledToday = true;
         _lastReportDate = DateOnly.FromDateTime(TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, AppTimeZone));
+        CheckAchievements();
+    }
+
+    public static void CheckAchievements()
+    {
+        var stats = StatsEngine.Calculate();
+        var newAchievements = AchievementManager.CheckAndUnlock(stats);
+        foreach (var achievement in newAchievements)
+        {
+            AchievementManager.ShowAchievementToast(achievement);
+        }
     }
 
     private void ShowLogViewerWindow()

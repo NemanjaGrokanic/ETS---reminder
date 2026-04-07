@@ -238,8 +238,10 @@ public partial class LogViewerWindow : Window
         ReportStorage.SaveReport(selectedDate, text, tzLabel);
         AddEntryTextBox.Clear();
 
-        // Refresh
+        // Refresh and check achievements
         RefreshCurrentMonth();
+        LoadProfileIndicator();
+        App.CheckAchievements();
 
         // Make sure the month appears in the list
         var monthTag = (selectedDate.Year, selectedDate.Month);

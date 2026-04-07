@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows;
 using System.Windows.Media;
 using Color = System.Windows.Media.Color;
 using ColorConverter = System.Windows.Media.ColorConverter;
@@ -24,7 +25,7 @@ public partial class StatsDashboardWindow : Window
         {
             ProfileName.Text = profile.DisplayName;
             ProfileLevel.Text = $"Level {profile.Level}";
-            ProfileTitle.Text = $" — {profile.LevelTitle}";
+            ProfileTitle.Text = $" \u2014 {profile.LevelTitle}";
             ProfileRole.Text = profile.Role;
             AvatarInitials.Text = profile.Initials;
             AvatarBorder.Background = new SolidColorBrush(
@@ -67,5 +68,43 @@ public partial class StatsDashboardWindow : Window
                 (Color)ColorConverter.ConvertFromString("#7F8C8D"));
             TodayCoinsDetail.Text = "Fill your report to earn coins!";
         }
+
+        // Achievements
+        LoadAchievements(profile);
     }
+
+    private void LoadAchievements(UserProfile? profile)
+    {
+        var unlocked = profile?.UnlockedAchievements ?? [];
+        var unlockedCount = unlocked.Count;
+        var totalCount = AchievementManager.AllAchievements.Length;
+
+        AchievementCountText.Text = $" ({unlockedCount}/{totalCount})";
+
+        var items = AchievementManager.AllAchievements.Select(a =>
+        {
+            var isUnlocked = unlocked.Contains(a.Id);
+            return new AchievementDisplayItem
+            {
+                Icon = System.Net.WebUtility.HtmlDecode(a.Icon),
+                Name = a.Name,
+                Description = isUnlocked ? a.Description : "???",
+                Opacity = isUnlocked ? 1.0 : 0.35,
+                NameColor = isUnlocked
+                    ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E67E22"))
+                    : new SolidColorBrush((Color)ColorConverter.ConvertFromString("#7F8C8D"))
+            };
+        }).ToList();
+
+        AchievementsList.ItemsSource = items;
+    }
+}
+
+public class AchievementDisplayItem
+{
+    public string Icon { get; set; } = "";
+    public string Name { get; set; } = "";
+    public string Description { get; set; } = "";
+    public double Opacity { get; set; } = 1.0;
+    public SolidColorBrush NameColor { get; set; } = new(Colors.Gray);
 }

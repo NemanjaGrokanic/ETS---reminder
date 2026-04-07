@@ -63,7 +63,7 @@
                 <!-- Current Streak -->
                 <Border Background="{DynamicResource PanelBackground}" CornerRadius="8" Padding="15" Margin="0,0,5,10">
                     <StackPanel HorizontalAlignment="Center">
-                        <TextBlock Text="&#x1F525;" FontSize="22" HorizontalAlignment="Center"/>
+                        <TextBlock Text="&#x1F525;" FontSize="22" FontFamily="Segoe UI Emoji" HorizontalAlignment="Center"/>
                         <TextBlock x:Name="CurrentStreakText"
                                    Text="0" FontSize="28" FontWeight="Bold"
                                    Foreground="#E67E22" HorizontalAlignment="Center"/>
@@ -76,7 +76,7 @@
                 <!-- Longest Streak -->
                 <Border Background="{DynamicResource PanelBackground}" CornerRadius="8" Padding="15" Margin="5,0,0,10">
                     <StackPanel HorizontalAlignment="Center">
-                        <TextBlock Text="&#x1F3C6;" FontSize="22" HorizontalAlignment="Center"/>
+                        <TextBlock Text="&#x1F3C6;" FontSize="22" FontFamily="Segoe UI Emoji" HorizontalAlignment="Center"/>
                         <TextBlock x:Name="LongestStreakText"
                                    Text="0" FontSize="28" FontWeight="Bold"
                                    Foreground="#E67E22" HorizontalAlignment="Center"/>
@@ -89,7 +89,7 @@
                 <!-- Total Reports -->
                 <Border Background="{DynamicResource PanelBackground}" CornerRadius="8" Padding="15" Margin="0,0,5,10">
                     <StackPanel HorizontalAlignment="Center">
-                        <TextBlock Text="&#x1F4CA;" FontSize="22" HorizontalAlignment="Center"/>
+                        <TextBlock Text="&#x1F4CB;" FontSize="22" FontFamily="Segoe UI Emoji" HorizontalAlignment="Center"/>
                         <TextBlock x:Name="TotalReportsText"
                                    Text="0" FontSize="28" FontWeight="Bold"
                                    Foreground="#E67E22" HorizontalAlignment="Center"/>
@@ -102,7 +102,7 @@
                 <!-- Coins -->
                 <Border Background="{DynamicResource PanelBackground}" CornerRadius="8" Padding="15" Margin="5,0,0,10">
                     <StackPanel HorizontalAlignment="Center">
-                        <TextBlock Text="&#x1FA99;" FontSize="22" HorizontalAlignment="Center"/>
+                        <TextBlock Text="&#x1F4B0;" FontSize="22" FontFamily="Segoe UI Emoji" HorizontalAlignment="Center"/>
                         <TextBlock x:Name="TotalCoinsText"
                                    Text="0" FontSize="28" FontWeight="Bold"
                                    Foreground="#E67E22" HorizontalAlignment="Center"/>
@@ -169,6 +169,47 @@
                                FontSize="12" Foreground="{DynamicResource SubTextColor}"/>
                     <TextBlock Text="20+ days: +5 bonus coins per report"
                                FontSize="12" Foreground="{DynamicResource SubTextColor}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Achievements -->
+            <Border Background="{DynamicResource PanelBackground}" CornerRadius="8" Padding="15" Margin="0,0,0,10">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                        <TextBlock Text="Achievements"
+                                   FontSize="14" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextColor}"/>
+                        <TextBlock x:Name="AchievementCountText"
+                                   Text=" (0/0)"
+                                   FontSize="14"
+                                   Foreground="{DynamicResource SubTextColor}"/>
+                    </StackPanel>
+                    <ItemsControl x:Name="AchievementsList">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="0,0,0,6" Padding="8,6"
+                                        CornerRadius="6"
+                                        Background="{DynamicResource WindowBackground}"
+                                        Opacity="{Binding Opacity}">
+                                    <DockPanel>
+                                        <TextBlock DockPanel.Dock="Left"
+                                                   Text="{Binding Icon}"
+                                                   FontSize="20" FontFamily="Segoe UI Emoji"
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,10,0"/>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Name}"
+                                                       FontSize="13" FontWeight="SemiBold"
+                                                       Foreground="{Binding NameColor}"/>
+                                            <TextBlock Text="{Binding Description}"
+                                                       FontSize="11"
+                                                       Foreground="{DynamicResource SubTextColor}"/>
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </StackPanel>
             </Border>
 

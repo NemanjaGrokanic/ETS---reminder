@@ -12,6 +12,7 @@ public class UserProfile
     public string AuthProvider { get; set; } = "Local";
     public int TotalCoins { get; set; }
     public int LongestStreak { get; set; }
+    public List<string> UnlockedAchievements { get; set; } = [];
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public string Initials
