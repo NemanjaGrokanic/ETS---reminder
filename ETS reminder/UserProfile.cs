@@ -9,6 +9,8 @@ public class UserProfile
     public string Email { get; set; } = "";
     public string Role { get; set; } = "";
     public string AvatarColor { get; set; } = "#E67E22";
+    public string ActiveAvatarId { get; set; } = "initials";
+    public List<string> UnlockedAvatars { get; set; } = [];
     public string AuthProvider { get; set; } = "Local";
     public int TotalCoins { get; set; }
     public int BonusCoins { get; set; }

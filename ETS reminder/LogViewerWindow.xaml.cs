@@ -26,9 +26,7 @@ public partial class LogViewerWindow : Window
         if (profile == null) return;
 
         MenuProfileName.Text = profile.DisplayName;
-        MenuAvatarInitials.Text = profile.Initials;
-        MenuAvatar.Background = new System.Windows.Media.SolidColorBrush(
-            (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(profile.AvatarColor));
+        AvatarRenderer.RenderSmall(MenuAvatar, MenuAvatarInitials, profile);
 
         var stats = StatsEngine.Calculate();
         if (stats.CurrentStreak > 0)

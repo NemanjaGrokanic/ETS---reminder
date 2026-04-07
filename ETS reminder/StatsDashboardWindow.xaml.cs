@@ -26,9 +26,7 @@ public partial class StatsDashboardWindow : Window
             ProfileLevel.Text = $"Level {profile.Level}";
             ProfileTitle.Text = $" \u2014 {profile.LevelTitle}";
             ProfileRole.Text = profile.Role;
-            AvatarInitials.Text = profile.Initials;
-            AvatarBorder.Background = new SolidColorBrush(
-                (Color)ColorConverter.ConvertFromString(profile.AvatarColor));
+            AvatarRenderer.Render(AvatarBorder, AvatarInitials, profile, 24);
 
             // Level progress
             var prevLevel = profile.Level > 1 ? profile.Level switch

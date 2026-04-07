@@ -118,6 +118,12 @@
             <TextBlock Text="Avatar Color" FontSize="13"
                        Foreground="{DynamicResource TextColor}" Margin="0,12,0,4"/>
             <WrapPanel x:Name="ColorPanel"/>
+
+            <TextBlock Text="Avatar Icon" FontSize="13"
+                       Foreground="{DynamicResource TextColor}" Margin="0,12,0,4"/>
+            <TextBlock Text="Initials (default)" FontSize="11"
+                       Foreground="{DynamicResource SubTextColor}" Margin="0,0,0,4"/>
+            <WrapPanel x:Name="AvatarPanel"/>
         </StackPanel>
 
         <!-- Button -->

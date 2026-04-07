@@ -15,6 +15,7 @@ public partial class ProfileSetupWindow : Window
     ];
 
     private string _selectedColor = "#E67E22";
+    private string _selectedAvatarId = AvatarCatalog.InitialsId;
     private readonly UserProfile? _existingProfile;
 
     public ProfileSetupWindow(UserProfile? existingProfile = null)
@@ -24,6 +25,7 @@ public partial class ProfileSetupWindow : Window
         _existingProfile = existingProfile;
 
         PopulateColors();
+        PopulateAvatars();
 
         if (_existingProfile != null)
         {
@@ -33,8 +35,10 @@ public partial class ProfileSetupWindow : Window
             EmailTextBox.Text = _existingProfile.Email;
             RoleTextBox.Text = _existingProfile.Role;
             _selectedColor = _existingProfile.AvatarColor;
+            _selectedAvatarId = _existingProfile.ActiveAvatarId ?? AvatarCatalog.InitialsId;
             UpdateAvatarPreview();
             HighlightSelectedColor();
+            HighlightSelectedAvatar();
         }
 
         NameTextBox.Focus();
@@ -85,14 +89,128 @@ public partial class ProfileSetupWindow : Window
         AvatarPreview.Background = new SolidColorBrush(
             (Color)ColorConverter.ConvertFromString(_selectedColor));
 
-        var name = NameTextBox.Text.Trim();
-        var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        AvatarInitials.Text = parts.Length switch
+        if (_selectedAvatarId == AvatarCatalog.InitialsId)
         {
-            0 => "?",
-            1 => parts[0][..1].ToUpper(),
-            _ => $"{parts[0][..1]}{parts[^1][..1]}".ToUpper()
+            var name = NameTextBox.Text.Trim();
+            var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            AvatarInitials.Text = parts.Length switch
+            {
+                0 => "?",
+                1 => parts[0][..1].ToUpper(),
+                _ => $"{parts[0][..1]}{parts[^1][..1]}".ToUpper()
+            };
+            AvatarInitials.FontFamily = new System.Windows.Media.FontFamily("Segoe UI");
+            AvatarInitials.FontSize = 28;
+        }
+        else
+        {
+            var avatar = AvatarCatalog.GetById(_selectedAvatarId);
+            if (avatar != null)
+            {
+                AvatarInitials.Text = avatar.Symbol;
+                AvatarInitials.FontFamily = new System.Windows.Media.FontFamily("Segoe UI Emoji");
+                AvatarInitials.FontSize = 26;
+            }
+        }
+    }
+
+    private void PopulateAvatars()
+    {
+        var profile = _existingProfile;
+        var unlocked = profile?.UnlockedAvatars ?? [];
+
+        // Add "Initials" button first
+        var initialsBtn = new System.Windows.Controls.Button
+        {
+            Content = "AB",
+            Tag = AvatarCatalog.InitialsId,
+            Width = 36, Height = 36,
+            FontSize = 12, FontWeight = System.Windows.FontWeights.Bold,
+            Foreground = System.Windows.Media.Brushes.White,
+            Background = new SolidColorBrush(Color.FromRgb(0x55, 0x55, 0x55)),
+            BorderThickness = new System.Windows.Thickness(2),
+            BorderBrush = System.Windows.Media.Brushes.Transparent,
+            Cursor = System.Windows.Input.Cursors.Hand,
+            Margin = new System.Windows.Thickness(3),
+            ToolTip = "Initials (default)"
         };
+        initialsBtn.Click += AvatarButton_Click;
+        AvatarPanel.Children.Add(initialsBtn);
+
+        foreach (var avatar in AvatarCatalog.Avatars)
+        {
+            var isOwned = avatar.Price == 0 || unlocked.Contains(avatar.Id);
+            var btn = new System.Windows.Controls.Button
+            {
+                Content = isOwned ? avatar.Symbol : "\U0001F512",
+                Tag = avatar.Id,
+                Width = 36, Height = 36,
+                FontSize = 18,
+                FontFamily = new System.Windows.Media.FontFamily("Segoe UI Emoji"),
+                Background = new SolidColorBrush(Color.FromRgb(0x3E, 0x3E, 0x42)),
+                Foreground = System.Windows.Media.Brushes.White,
+                BorderThickness = new System.Windows.Thickness(2),
+                BorderBrush = System.Windows.Media.Brushes.Transparent,
+                Cursor = System.Windows.Input.Cursors.Hand,
+                Margin = new System.Windows.Thickness(3),
+                ToolTip = isOwned ? avatar.Name : $"{avatar.Name} ({avatar.Price} coins)",
+                IsEnabled = isOwned,
+                Opacity = isOwned ? 1.0 : 0.4
+            };
+            btn.Click += AvatarButton_Click;
+            AvatarPanel.Children.Add(btn);
+        }
+    }
+
+    private void AvatarButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is System.Windows.Controls.Button btn && btn.Tag is string avatarId)
+        {
+            // If it's a locked premium avatar, offer to buy
+            if (avatarId != AvatarCatalog.InitialsId)
+            {
+                var avatar = AvatarCatalog.GetById(avatarId);
+                if (avatar != null && avatar.Price > 0)
+                {
+                    var profile = _existingProfile ?? UserProfile.Instance;
+                    var unlocked = profile?.UnlockedAvatars ?? [];
+                    if (!unlocked.Contains(avatarId))
+                    {
+                        var result = System.Windows.MessageBox.Show(
+                            $"Buy \"{avatar.Name}\" avatar for {avatar.Price} coins?",
+                            "Buy Avatar", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                        if (result != MessageBoxResult.Yes) return;
+
+                        if (profile == null || !profile.SpendCoins(avatar.Price))
+                        {
+                            System.Windows.MessageBox.Show("Not enough coins!",
+                                "Insufficient Coins", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            return;
+                        }
+                        profile.UnlockedAvatars.Add(avatarId);
+                        profile.Save();
+
+                        // Refresh the panel to show unlocked
+                        AvatarPanel.Children.Clear();
+                        PopulateAvatars();
+                    }
+                }
+            }
+
+            _selectedAvatarId = avatarId;
+            UpdateAvatarPreview();
+            HighlightSelectedAvatar();
+        }
+    }
+
+    private void HighlightSelectedAvatar()
+    {
+        foreach (System.Windows.Controls.Button btn in AvatarPanel.Children)
+        {
+            btn.BorderBrush = (btn.Tag as string) == _selectedAvatarId
+                ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E67E22"))
+                : System.Windows.Media.Brushes.Transparent;
+        }
     }
 
     private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -111,6 +229,7 @@ public partial class ProfileSetupWindow : Window
         profile.Email = EmailTextBox.Text.Trim();
         profile.Role = RoleTextBox.Text.Trim();
         profile.AvatarColor = _selectedColor;
+        profile.ActiveAvatarId = _selectedAvatarId;
         profile.Save();
 
         DialogResult = true;
